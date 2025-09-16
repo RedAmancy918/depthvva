@@ -358,10 +358,11 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
         teleop.connect()
 
     listener, events = init_keyboard_listener()
-
     with VideoEncodingManager(dataset):
         recorded_episodes = 0
         while recorded_episodes < cfg.dataset.num_episodes and not events["stop_recording"]:
+            input(f"Press Enter to start recording...")
+            #开始录制
             log_say(f"Recording episode {dataset.num_episodes}", cfg.play_sounds)
             record_loop(
                 robot=robot,
@@ -377,6 +378,7 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
 
             # Execute a few seconds without recording to give time to manually reset the environment
             # Skip reset for the last episode to be recorded
+            # 恢复环境
             if not events["stop_recording"] and (
                 (recorded_episodes < cfg.dataset.num_episodes - 1) or events["rerecord_episode"]
             ):
