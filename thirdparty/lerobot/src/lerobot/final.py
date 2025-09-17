@@ -13,8 +13,9 @@ RealSense D435：按固定间隔采集彩色 PNG，并导出相机内参与外�
 python final.py \
   --output ./out_rs \
   --width 1280 --height 720 --fps 30 \
-  --interval 2.0 --max-count 10 \
-  --fix-exposure
+  --interval 2.0 \
+  --max-count 20 \
+  --fix-exposure --exposure-us 200 --wb-k 4500
 """
 
 import argparse
