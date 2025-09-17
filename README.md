@@ -34,3 +34,5 @@ python -m lerobot.record \
   --dataset.repo_id=${HF_USER}/eval_so101 \
   --dataset.push_to_hub=false
   ```
+- **设计了将方块夹如透明胶圈内的task，第一次采集了30组数据，在本地step=4000的情况下train了模型，并部署的so100中，轨迹大致合理**
+- **数据量不够，再次采集了30组，但这次报错图像与动作帧数不匹配。所有图像的帧数都只有100帧**
