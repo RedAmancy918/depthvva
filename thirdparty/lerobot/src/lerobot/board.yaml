@@ -1,0 +1,6 @@
+# board.yaml
+# 棋盘格标定
+type: checkerboard
+rows: 8             # 棋盘角点行数
+columns: 5          # 棋盘角点列数
+square_size: 0.02   # 每个小格边长，单位：米（20mm = 0.02m）
