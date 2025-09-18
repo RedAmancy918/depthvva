@@ -25,6 +25,10 @@ def estimate_num_samples(
     The power controls the sample growth relative to dataset size.
     Lower the power for less number of samples.
 
+    基于数据集大小估算采样数量的启发式方法。
+    power参数控制采样数量随数据集规模的增长速度。
+    power值越小，采样数量越少。
+
     For default arguments, we have:
     - from 1 to ~500, num_samples=100
     - at 1000, num_samples=177

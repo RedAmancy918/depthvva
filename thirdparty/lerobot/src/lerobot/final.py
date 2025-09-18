@@ -39,14 +39,12 @@ _HAS_CV2 = False
 _HAS_IMAGEIO = False
 try:
     import cv2  # type: ignore
-
     _HAS_CV2 = True
 except Exception:
     pass
 
 try:
     import imageio.v2 as imageio  # type: ignore
-
     _HAS_IMAGEIO = True
 except Exception:
     pass
@@ -73,7 +71,7 @@ def save_image_bgr_png(path: str, bgr: np.ndarray) -> None:
             raise RuntimeError(f"cv2.imwrite 失败: {path}")
         return
     if _HAS_IMAGEIO:
-        imageio.imwrite(path, bgr[:, :, ::-1])  # imageio期望RGB
+        imageio.imwrite(path, bgr[:, :, ::-1])  # imageio 期望 RGB
         return
     np.save(os.path.splitext(path)[0] + ".npy", bgr)
 
@@ -99,11 +97,38 @@ def intrinsics_from_profile(vsp: rs.video_stream_profile) -> CameraIntrinsics:
 
 
 def _get_depth_scale(profile: rs.pipeline_profile) -> float:
+    """
+    更鲁棒的 depth_scale 获取方式：
+    - 优先使用 first_depth_sensor() / depth_sensor.get_depth_scale()
+    - 其次把通用 sensor 强转为 depth_sensor 再取
+    - 兜底从 option.depth_units 读取（单位米/单位）
+    """
     dev = profile.get_device()
+
+    # 方案1：专用 API（部分版本提供）
+    try:
+        ds = dev.first_depth_sensor()  # 若不可用会抛异常
+        return float(ds.get_depth_scale())
+    except Exception:
+        pass
+
+    # 方案2：遍历传感器，强转为 depth_sensor
     for s in dev.sensors:
-        if s.is_depth_sensor():
-            return float(s.get_depth_scale())
-    raise RuntimeError("未找到深度传感器，无法读取 depth_scale")
+        try:
+            ds = rs.depth_sensor(s)  # 等价于 as_depth_sensor
+            return float(ds.get_depth_scale())
+        except Exception:
+            continue
+
+    # 方案3：读取 depth_units 选项
+    for s in dev.sensors:
+        try:
+            if s.supports(rs.option.depth_units):
+                return float(s.get_option(rs.option.depth_units))
+        except Exception:
+            continue
+
+    raise RuntimeError("未能获取 depth_scale：未找到 DepthSensor 或不支持 depth_units 选项")
 
 
 def export_full_intrinsics(profile: rs.pipeline_profile, out_json: str) -> None:
@@ -166,7 +191,7 @@ def set_manual_exposure_white_balance(profile: rs.pipeline_profile,
     """（可选）固定曝光和白平衡，提升标定角点稳定性。"""
     try:
         dev = profile.get_device()
-        # 找到RGB相机传感器；不同设备命名可能不同，这里更稳的是找 supports 的 option
+        # 找到支持曝光/白平衡选项的传感器（通常是 RGB）
         color_sensor = None
         for s in dev.sensors:
             if s.supports(rs.option.enable_auto_exposure) and s.supports(rs.option.exposure):
