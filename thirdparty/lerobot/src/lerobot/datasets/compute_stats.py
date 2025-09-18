@@ -54,22 +54,31 @@ def auto_downsample_height_width(img: np.ndarray, target_size: int = 150, max_si
     return img[:, ::downsample_factor, ::downsample_factor]
 
 
-def sample_images(image_paths: list[str]) -> np.ndarray:
-    sampled_indices = sample_indices(len(image_paths))
+# def sample_images(image_paths: list[str]) -> np.ndarray:
+#     sampled_indices = sample_indices(len(image_paths))
 
-    images = None
-    for i, idx in enumerate(sampled_indices):
-        path = image_paths[idx]
-        # we load as uint8 to reduce memory usage
+#     images = None
+#     for i, idx in enumerate(sampled_indices):
+#         path = image_paths[idx]
+#         # we load as uint8 to reduce memory usage
+#         img = load_image_as_numpy(path, dtype=np.uint8, channel_first=True)
+#         img = auto_downsample_height_width(img)
+
+#         if images is None:
+#             images = np.empty((len(sampled_indices), *img.shape), dtype=np.uint8)
+
+#         images[i] = img
+
+#     return images
+
+def sample_images(image_paths: list[str]) -> np.ndarray:
+    images = []
+    for path in image_paths:
         img = load_image_as_numpy(path, dtype=np.uint8, channel_first=True)
         img = auto_downsample_height_width(img)
+        images.append(img)
+    return np.stack(images, axis=0)
 
-        if images is None:
-            images = np.empty((len(sampled_indices), *img.shape), dtype=np.uint8)
-
-        images[i] = img
-
-    return images
 
 
 def get_feature_stats(array: np.ndarray, axis: tuple, keepdims: bool) -> dict[str, np.ndarray]:
