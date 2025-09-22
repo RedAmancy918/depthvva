@@ -13,7 +13,7 @@ python -m lerobot.record   --robot.disable_torque_on_disconnect=true         --r
 相机标定：
 
 ```py
- python calibrate_extrinsics.py \
+ python calculate_ax.py \
   --images_glob "out_rs/images/*.png" \
   --calib out_rs/camera_calib.json \
   --board board.yaml \
