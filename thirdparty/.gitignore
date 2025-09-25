@@ -1,2 +1,4 @@
 3D-Diffusion-Policy/third_party/dexart-release/assets/
 3D-Diffusion-Policy/third_party/VRL3/vrl3_ckpts/
+Depth-Anything-V2/checkpoints/depth_anything_v2_vitb.pth/
+Depth-Anything-V2/checkpoints/depth_anything_v2_vitl.pth/

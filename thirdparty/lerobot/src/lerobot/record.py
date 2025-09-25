@@ -81,6 +81,16 @@ python -m lerobot.record \
 
 import logging
 import time
+# 引入realsense的双线程
+import threading, collections, os, json
+from typing import Optional, Deque, Tuple
+import numpy as np
+
+try: 
+    import pyrealsense2 as rs
+except ImportError:
+    rs = None
+
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from pprint import pformat
@@ -178,6 +188,13 @@ class DatasetRecordConfig:
         if self.single_task is None:
             raise ValueError("You need to provide a task as argument in `single_task`.")
 
+class RealsenseDepthWorker:
+    f"""
+    后台线程：采集realsense深度帧对齐到彩色空间，保存为.npy，并提供系统时间帧（但是要系统时间吗？应该要相对的时间吧。就是基于这个数据集开始采集的时间做叠加）
+    - 每一帧：depth/{frame_idx:06d}.npy
+    - 记录: timestamps.csv (frame_idx, rs_timestamp_ms, system_ts_s)
+    - 保存一次性元信息: meta.json（内参、depth_scale 等
+    """
 
 @dataclass
 class RecordConfig:

@@ -52,3 +52,10 @@ def sample_images(image_paths: list[str]) -> np.ndarray:
 ```
 
 -**电机坏了**
+
+
+## 测试
+**dp+depthany**
+1. 主摄 RGB+深度热力 腕部 RGB+深度热力 path:
+2. 主摄 深度热力     腕部 深度热力 path:
+3. 主摄 RGB         腕部 深度热力 path:
