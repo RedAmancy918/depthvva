@@ -253,8 +253,15 @@ class OpenCVCamera(Camera):
         fourcc_succ = self.videocapture.set(cv2.CAP_PROP_FOURCC, self.fourcc)
         actual_fourcc = self.videocapture.get(cv2.CAP_PROP_FOURCC)
         if not fourcc_succ or actual_fourcc != self.fourcc:
-            raise RuntimeError(f"{self} failed to set fourcc={self.fourcc} ({actual_fourcc=}, {fourcc_succ=}).")
-
+            #raise RuntimeError(f"{self} failed to set fourcc={self.fourcc} ({actual_fourcc=}, {fourcc_succ=}).")
+            # 暂时忽略，继续执行取消mjpg强校验
+            logger.warning(
+                f"{self} failed to set fourcc={self.fourcc} ({actual_fourcc=}, {fourcc_succ=}). Continuing without enforcing MJPG."
+            )
+            try:
+                self.fourcc = int(actual_fourcc)
+            except Exception:
+                pass
     @staticmethod
     def find_cameras() -> list[dict[str, Any]]:
         """

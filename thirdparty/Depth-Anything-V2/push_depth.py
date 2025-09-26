@@ -2,6 +2,16 @@
 # -*- coding: utf-8 -*-
 # conda activate depth
 """
+依赖检查
+# 虚拟摄像头已就绪就略过；否则：
+sudo apt install -y v4l2loopback-utils v4l-utils \
+  gstreamer1.0-tools gstreamer1.0-plugins-base \
+  gstreamer1.0-plugins-good gstreamer1.0-plugins-bad
+
+# Python 侧（在 conda env=depth 里）
+pip install pyvirtualcam opencv-python torch timm
+
+
 检查摄像头
 ls -l /dev/video30
 v4l2-ctl --all -d /dev/video30
@@ -12,25 +22,45 @@ ffplay /dev/video30
 摄像头伪装
 
 sudo modprobe -r v4l2loopback 2>/dev/null || true
-sudo modprobe v4l2loopback video_nr=30 card_label="DepthAnything Out" exclusive_caps=1
+sudo modprobe v4l2loopback \
+  devices=2 \
+  video_nr=30,31 \
+  card_label="DepthAnything Out A,DepthAnything Out B" \
+  exclusive_caps=1
+
 
 
 vitl用
 
-python3 push_depth.py \
-  --in /dev/video0 --out /dev/video30 \
-  --width 1280 --height 720 --fps 30 --preview \
-  --ckpt checkpoints/depth_anything_v2_vitl.pth
+CUDA_VISIBLE_DEVICES=0 python3 push_depth.py \
+  --in /dev/video0 \
+  --out /dev/video30 \
+  --width 1280 --height 720 \
+  --fps 30 \
+  --preview \
+  --ckpt checkpoints/depth_anything_v2_vitl.pth \
+  --variant vitl \
+  --device cuda:0
+
 
 
 vitb用
 
-python3 push_depth.py \
-  --in /dev/video0 --out /dev/video30 \
-  --width 1280 --height 720 --fps 30 --preview \
+CUDA_VISIBLE_DEVICES=0 python3 push_depth.py \
+  --in /dev/video0 \
+  --out /dev/video30 \
+  --width 1280 --height 720 \
+  --fps 30 \
   --ckpt checkpoints/depth_anything_v2_vitb.pth \
-  --variant vitb
+  --variant vitb \
+  --device cuda:0 \
+  --out-format mjpg
 
+CUDA_VISIBLE_DEVICES=0 python3 push_depth.py \
+  --in /dev/video6 --out /dev/video30 \
+  --width 640 --height 480 --fps 30 \
+  --ckpt checkpoints/depth_anything_v2_vitb.pth --variant vitb \
+  --device cuda:0 --out-format mjpg
 """
 
 import argparse
@@ -121,6 +151,21 @@ def _open_pyvirtualcam(w: int, h: int, fps: int, out_dev: str, fmt: "PixelFormat
     cam = pyvirtualcam.Camera(width=w, height=h, fps=fps, device=out_dev, fmt=fmt)
     print(f"[OK] pyvirtualcam → {out_dev} {w}x{h}@{fps} fmt={fmt.name}")
     return cam
+
+# def _open_gst_writer(w: int, h: int, fps: int, out_dev: str):
+#     pipeline = (
+#         "appsrc is-live=true block=true format=TIME "
+#         "! videoconvert "
+#         f"! video/x-raw,format=BGR,width={w},height={h},framerate={fps}/1 "
+#         "! jpegenc "
+#         f"! image/jpeg,framerate={fps}/1 "
+#         f"! v4l2sink device={out_dev} sync=false"
+#     )
+#     writer = cv2.VideoWriter(pipeline, cv2.CAP_GSTREAMER, 0, fps, (w, h))
+#     if not writer.isOpened():
+#         raise RuntimeError("GStreamer v4l2sink 打不开；请安装 gstreamer1.0-plugins-base/good/bad。")
+#     print(f"[OK] GStreamer (MJPEG) → {out_dev} {w}x{h}@{fps}")
+#     return writer
 
 def _open_gst_writer(w: int, h: int, fps: int, out_dev: str):
     pipeline = (
