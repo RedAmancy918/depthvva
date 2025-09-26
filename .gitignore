@@ -1,0 +1,34 @@
+# 模型文件
+*.pth
+*.bin
+*.model
+*.ckpt
+*.safetensors
+
+# 检查点目录
+checkpoints/
+models/
+weights/
+
+# 大文件
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# 临时文件
+*.tmp
+*.temp
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
