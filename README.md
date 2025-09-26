@@ -57,5 +57,7 @@ def sample_images(image_paths: list[str]) -> np.ndarray:
 ## 测试
 **dp+depthany**
 1. 主摄 RGB+深度热力 腕部 RGB+深度热力 path:
+   图像拼接方式问题，裁减问题，推理输入源问题
 2. 主摄 深度热力     腕部 深度热力 path:
+   效果不错，但是很难看到
 3. 主摄 RGB         腕部 深度热力 path:
