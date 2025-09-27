@@ -37,7 +37,7 @@ python -m lerobot.record \
 - **设计了将方块夹如透明胶圈内的task，第一次采集了30组数据，在本地step=4000的情况下train了模型，并部署的so100中，轨迹大致合理**
 - **数据量不够，再次采集了30组，但这次报错图像与动作帧数不匹配。所有图像的帧数都只有100帧**
 
-##2025.9.18
+## 2025.9.18
 - **修改/home/ff/ff00/depthvva/thirdparty/lerobot/src/lerobot/datasets/compute_stats.py 
 如以下：解决了episodes_stats.jsonl中handeye和fixed中只保存100帧的问题**
 
@@ -59,3 +59,9 @@ def sample_images(image_paths: list[str]) -> np.ndarray:
 1. 主摄 RGB+深度热力 腕部 RGB+深度热力 path:
 2. 主摄 深度热力     腕部 深度热力 path:
 3. 主摄 RGB         腕部 深度热力 path:
+
+## 2025.09.27
+- **测试记录**
+- 叠放块 腕部深度热力+fixed rgb 在权重20000的时候效果最好 但是夹取的成功率都不高 考虑是采集数据的时候下爪的角度比较偏
+- 对比：腕部+fixed都rgb 
+- 腕部热力的启动的快一些 效果还是要好一些的
