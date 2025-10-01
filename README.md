@@ -178,7 +178,6 @@ if __name__ == '__main__':
 - 腕部热力的启动的快一些 效果还是要好一些的
 
 - **文件名称整理**
-![alt text](image.png)
 - train01
 task description: put the cube into circle
 - train02
@@ -186,6 +185,4 @@ task description: stack two cubes
 
 _depth: 两个摄像头都输入热力图
 _depth_hand:fixed 输入普通rgb，handeye输入热力图
-
 - outputs命名规则同上
-![alt text](image-1.png)
