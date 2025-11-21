@@ -1,0 +1,22 @@
+data/*
+checkpoints/*
+# 忽略模型权重
+*.ckpt
+*.pt
+*.pth
+
+# 忽略训练输出
+outputs/
+logs/
+wandb/
+__pycache__/
+*.log
+
+# 忽略大文件
+*.h5
+*.zarr
+*.npz
+*.npy
+*.mp4
+*.zip
+*.tar
