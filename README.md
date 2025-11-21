@@ -186,3 +186,13 @@ task description: stack two cubes
 _depth: 两个摄像头都输入热力图
 _depth_hand:fixed 输入普通rgb，handeye输入热力图
 - outputs命名规则同上
+
+##2025.11.21
+- **前期准备工作**
+-  实现eval的时候可以让depthanything实时处理并传给输入
+-  
+ - **项目进度**
+ - 在RoboTwin中比较各个框架与DP在stack_block_two任务中的表现 DP在clean clean 50的成功率是7%（7/100）
+ - 只新增一个灰度通道 4%（4/100）
+ - 新增灰度输入，与rgb分别被resnet处理concat后与state 进行 cross-attentio 0%
+
